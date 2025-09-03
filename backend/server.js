@@ -1,7 +1,8 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import feedbackRoutes from './src/routes/feedbackRoutes.js';
-import authRoutes from './src/routes/authRoutes.js'; // <-- IMPORT
+// Ensure this path is correct and the file exports a default
+import complaintRoutes from './src/routes/complaintRoutes.js';
+import authRoutes from './src/routes/authRoutes.js';
 
 dotenv.config();
 const app = express();
@@ -10,8 +11,8 @@ const PORT = process.env.PORT || 3001;
 app.use(express.json());
 
 // API Routes
-app.use('/api/auth', authRoutes); // <-- ADD
-app.use('/api/feedback', feedbackRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/complaints', complaintRoutes); // <-- This is likely line 18
 
 app.get('/', (req, res) => {
     res.send('Public Feedback Analysis Agent Backend is running! 🚀');
