@@ -15,16 +15,16 @@ export const getAllComplaints = async (req, res) => {
 
 // Submit a new complaint
 export const submitComplaint = async (req, res) => {
-    const { postcode, urgency } = req.body;
-    const user_id = req.user.id;
+    const { complaint, postcode } = req.body;
+    const user_id = req.user.id; 
 
-    if (typeof postcode !== 'number' || typeof urgency !== 'number') {
-        return res.status(400).json({ error: 'postcode and urgency are required and must be numbers.' });
+    if (!complaint || typeof postcode !== 'number') {
+        return res.status(400).json({ error: 'complaint (string) and postcode (number) are required.' });
     }
 
     const { data, error } = await supabase
         .from('complaints')
-        .insert([{ postcode, urgency, user_id }])
+        .insert([{ complaint, postcode, user_id }]) 
         .select();
 
     if (error) {

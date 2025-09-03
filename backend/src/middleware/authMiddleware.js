@@ -14,6 +14,7 @@ export const authenticateToken = async (req, res, next) => {
         return res.sendStatus(403); // Forbidden
     }
 
+    console.log('✅ Auth Middleware: User authenticated with ID:', user.id);
     req.user = user; // Attach user to the request object
     next();
 };
