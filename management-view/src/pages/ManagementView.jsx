@@ -17,6 +17,7 @@ const ManagementView = ({ onLogout }) => {
       lng: 103.8198,
       radius: 500,
       urgency: 80,
+      description: 'Cluster near City Center: Multiple urgent complaints about broken streetlights and potholes.',
       complaints: [
         { id: 101, text: 'Broken streetlight', location: 'Street A', submittedAt: '2024-01-15' },
         { id: 102, text: 'Pothole', location: 'Street B', submittedAt: '2024-01-14' },
@@ -28,6 +29,7 @@ const ManagementView = ({ onLogout }) => {
       lng: 103.83,
       radius: 300,
       urgency: 45,
+      description: 'Cluster near Park Connector: Moderate urgency due to overflowing dustbin.',
       complaints: [
         { id: 201, text: 'Overflowing dustbin', location: 'Park Connector', submittedAt: '2024-01-16' },
       ],
@@ -38,6 +40,7 @@ const ManagementView = ({ onLogout }) => {
       lng: 103.80,
       radius: 400,
       urgency: 25,
+      description: 'Cluster near Playground: Low urgency, faded paint and minor scuff marks reported.',
       complaints: [
         { id: 301, text: 'Faded paint on bench', location: 'Playground', submittedAt: '2024-01-12' },
         { id: 302, text: 'Scuff marks on wall', location: 'Void Deck', submittedAt: '2024-01-11' },
