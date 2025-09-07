@@ -1,6 +1,6 @@
 // src/components/Map.jsx
 import React from 'react';
-import { GoogleMap, LoadScript, Circle } from '@react-google-maps/api';
+import { GoogleMap, Circle } from '@react-google-maps/api';
 
 const containerStyle = {
   width: '100%',
@@ -13,7 +13,7 @@ const center = {
 };
 
 const MapComponent = ({ clusters, onClusterClick }) => {
-  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+  // apiKey is now handled by parent
   const getCircleOptions = (urgency) => {
     const color = urgency > 70 ? 'darkred' : (urgency > 40 ? 'red' : 'yellow');
     return {
@@ -28,33 +28,23 @@ const MapComponent = ({ clusters, onClusterClick }) => {
 
   return (
     <div className="map-wrapper">
-      {!apiKey ? (
-        <div className="map-error">
-          <span style={{ color: 'red', fontWeight: 'bold', padding: '2em', textAlign: 'center' }}>
-            Map API key is missing or invalid.<br />Please set a valid key in your .env file.
-          </span>
-        </div>
-      ) : (
-        <div className="map-frame">
-          <LoadScript googleMapsApiKey={apiKey}>
-            <GoogleMap
-              mapContainerStyle={containerStyle}
-              center={center}
-              zoom={12}
-            >
-              {clusters.map((cluster) => (
-                <Circle
-                  key={cluster.id}
-                  center={{ lat: cluster.lat, lng: cluster.lng }}
-                  radius={cluster.radius}
-                  options={getCircleOptions(cluster.urgency)}
-                  onClick={() => onClusterClick(cluster.complaints)}
-                />
-              ))}
-            </GoogleMap>
-          </LoadScript>
-        </div>
-      )}
+      <div className="map-frame">
+        <GoogleMap
+          mapContainerStyle={containerStyle}
+          center={center}
+          zoom={12}
+        >
+          {clusters.map((cluster) => (
+            <Circle
+              key={cluster.id}
+              center={{ lat: cluster.lat, lng: cluster.lng }}
+              radius={cluster.radius}
+              options={getCircleOptions(cluster.urgency)}
+              onClick={() => onClusterClick(cluster.complaints)}
+            />
+          ))}
+        </GoogleMap>
+      </div>
     </div>
   );
 };

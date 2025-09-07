@@ -1,0 +1,75 @@
+/* Auth form styles for Login and Register components */
+.auth-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 60vh;
+  margin-top: 4rem;
+}
+
+.auth-container {
+  background: #f3f4f6;
+  padding: 2em 2.5em;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  max-width: 400px;
+  width: 100%;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 0.5em;
+  font-weight: 500;
+  color: #222;
+}
+
+.form-group input {
+  padding: 0.5em;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 1em;
+  color: #222;
+  background: #fff;
+}
+
+.btn-primary {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 0.75em 1.5em;
+  border-radius: 6px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: #1d4ed8;
+}
+
+.auth-switch {
+  margin-top: 1em;
+  text-align: center;
+  color: #222;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: #2563eb;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 1em;
+  padding: 0;
+}

@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import MapComponent from '../components/Map';
 import ComplaintsTable from '../components/ComplaintsTable';
+import AllComplaintsPage from './AllComplaintsPage';
+import { LoadScript, useJsApiLoader } from '@react-google-maps/api';
 
-const ManagementView = () => {
+const ManagementView = ({ onLogout }) => {
   const [selectedComplaints, setSelectedComplaints] = useState([]);
+  const [activeTab, setActiveTab] = useState('map');
 
   // Mock data for clusters - replace this with data from your backend
   const clusters = [
@@ -50,13 +53,42 @@ const ManagementView = () => {
     }, 100);
   };
 
+  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+  // Use isLoaded to prevent duplicate script loads
+  const { isLoaded, loadError } = useJsApiLoader({ googleMapsApiKey: apiKey });
+
   return (
     <div>
-      <Navbar />
-      <div className="map-container">
-        <MapComponent clusters={clusters} onClusterClick={handleClusterClick} />
-      </div>
-      <ComplaintsTable complaints={selectedComplaints} />
+      <Navbar onLogout={onLogout} onTabChange={setActiveTab} activeTab={activeTab} />
+      {activeTab === 'map' && (
+        <>
+          <div className="map-container">
+            {!apiKey ? (
+              <div className="map-error">
+                <span style={{ color: 'red', fontWeight: 'bold', padding: '2em', textAlign: 'center' }}>
+                  Map API key is missing or invalid.<br />Please set a valid key in your .env file.
+                </span>
+              </div>
+            ) : loadError ? (
+              <div className="map-error">
+                <span style={{ color: 'red', fontWeight: 'bold', padding: '2em', textAlign: 'center' }}>
+                  Failed to load Google Maps API.
+                </span>
+              </div>
+            ) : isLoaded ? (
+              <MapComponent clusters={clusters} onClusterClick={handleClusterClick} />
+            ) : (
+              <div className="map-error">
+                <span style={{ color: '#222', fontWeight: 'bold', padding: '2em', textAlign: 'center' }}>
+                  Loading map...
+                </span>
+              </div>
+            )}
+          </div>
+          <ComplaintsTable complaints={selectedComplaints} />
+        </>
+      )}
+      {activeTab === 'all-complaints' && <AllComplaintsPage />}
     </div>
   );
 };
