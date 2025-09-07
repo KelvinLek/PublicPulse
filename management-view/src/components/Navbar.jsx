@@ -4,7 +4,7 @@ const Navbar = ({ onLogout, onTabChange, activeTab }) => {
   return (
     <nav className="navbar">
       <div className="nav-container">
-        <span className="nav-logo">Public Pulse - Management Dashboard</span>
+        <span className="nav-logo">Management Dashboard</span>
         <ul>
           <li>
             <a

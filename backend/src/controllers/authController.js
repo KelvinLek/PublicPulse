@@ -62,5 +62,8 @@ export const signIn = async (req, res) => {
                 if (!profileError) profile = profileData;
             }
 
-            res.status(200).json({ ...data, user: { ...(data.user || data.session?.user || {}), ...profile } });
+            res.status(200).json({
+                access_token: data.session?.access_token,
+                user: { ...(data.user || data.session?.user || {}), ...profile }
+            });
 };

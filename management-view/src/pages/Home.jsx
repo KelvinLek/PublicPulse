@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import Login from './Login';
 import Register from './Register';
 import ManagementView from './ManagementView';
+import ComplaintForm from '../components/ComplaintForm';
+import UserComplaintsTable from '../components/UserComplaintsTable';
 
 const Home = () => {
   const [activePage, setActivePage] = useState('home');
@@ -11,14 +13,16 @@ const Home = () => {
     const saved = localStorage.getItem('sessionUser');
     return saved ? JSON.parse(saved) : null;
   });
-
   // Helper: check if user is management
   const isManagement = user && user.role === 'management_user';
+  // Add state to refresh complaints table after submission
+  const [refreshComplaints, setRefreshComplaints] = useState(false);
+
 
   // Handle login
   const handleLogin = async (email, password) => {
     try {
-  const res = await fetch('http://localhost:3001/api/auth/signin', {
+      const res = await fetch('http://localhost:3001/api/auth/signin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -26,8 +30,8 @@ const Home = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Login failed');
       // Save user/session
-      setUser(data.user || data.session?.user || data);
-      localStorage.setItem('sessionUser', JSON.stringify(data.user || data.session?.user || data));
+  setUser(data.user || data.session?.user || data);
+  localStorage.setItem('sessionUser', JSON.stringify(data));
       // If management, redirect
       if ((data.user || data.session?.user || data).role === 'management_user') {
         setActivePage('management');
@@ -46,7 +50,7 @@ const Home = () => {
       return;
     }
     try {
-  const res = await fetch('http://localhost:3001/api/auth/signup', {
+      const res = await fetch('http://localhost:3001/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -106,6 +110,12 @@ const Home = () => {
         <section className="hero-section">
           <h1>Welcome to Public Pulse</h1>
           <p>Your platform for community feedback and management.</p>
+          {user && (
+            <>
+              <ComplaintForm userId={user.id} onSubmitted={() => setRefreshComplaints(prev => !prev)} />
+              <UserComplaintsTable userId={user.id} refreshKey={refreshComplaints} />
+            </>
+          )}
         </section>
       )}
 

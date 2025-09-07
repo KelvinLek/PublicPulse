@@ -15,7 +15,7 @@ const center = {
 const MapComponent = ({ clusters, onClusterClick }) => {
   // apiKey is now handled by parent
   const getCircleOptions = (urgency) => {
-    const color = urgency > 70 ? 'darkred' : (urgency > 40 ? 'red' : 'yellow');
+    const color = urgency > 70 ? 'red' : (urgency > 40 ? 'orange' : 'yellow');
     return {
       strokeColor: color,
       strokeOpacity: 0.8,
