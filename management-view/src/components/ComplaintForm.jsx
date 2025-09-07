@@ -30,21 +30,16 @@ const ComplaintForm = ({ userId, onSubmitted }) => {
     e.preventDefault();
     setSubmitting(true);
     setError(null);
-    // Get token from localStorage/session
-    const sessionUser = localStorage.getItem('sessionUser');
-    let token = '';
-    if (sessionUser) {
-      const parsed = JSON.parse(sessionUser);
-      token = parsed?.access_token || parsed?.token || parsed?.session?.access_token || '';
-    }
+    // Get JWT from localStorage
+    const token = localStorage.getItem('access_token') || '';
     try {
-      const res = await fetch('http://localhost:3001/api/complaints/', {
+  const res = await fetch('http://localhost:3001/api/complaints/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ description: complaint, postcode: Number(postcode) })
+  body: JSON.stringify({ description: complaint, postcode: Number(postcode) })
       });
       if (!res.ok) throw new Error('Failed to submit complaint');
       setComplaint('');
@@ -62,7 +57,7 @@ const ComplaintForm = ({ userId, onSubmitted }) => {
       <div className="form-group">
         <label style={{ fontSize: '1.35em', fontWeight: 700, marginBottom: '0.75em' }}>Description</label>
         <textarea
-          style={{ fontSize: '1.25em', padding: '1.25em', marginBottom: '1.25em', borderRadius: '10px', border: '1px solid #d1d5db', background: '#fff' }}
+          style={{ fontSize: '1.25em', padding: '1.25em', marginBottom: '1.25em', borderRadius: '10px', border: '1px solid #d1d5db', background: '#fff', color: '#222' }}
           value={complaint}
           onChange={e => setComplaint(e.target.value)}
           required

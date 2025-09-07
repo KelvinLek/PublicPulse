@@ -10,7 +10,7 @@ const Home = () => {
   const [activePage, setActivePage] = useState('home');
   const [user, setUser] = useState(() => {
     // Try to load user from localStorage
-    const saved = localStorage.getItem('sessionUser');
+    const saved = localStorage.getItem('user');
     return saved ? JSON.parse(saved) : null;
   });
   // Helper: check if user is management
@@ -29,9 +29,10 @@ const Home = () => {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Login failed');
-      // Save user/session
-  setUser(data.user || data.session?.user || data);
-  localStorage.setItem('sessionUser', JSON.stringify(data));
+  // Save user/session
+  setUser(data.user);
+  localStorage.setItem('user', JSON.stringify(data.user));
+  localStorage.setItem('access_token', data.access_token);
       // If management, redirect
       if ((data.user || data.session?.user || data).role === 'management_user') {
         setActivePage('management');
@@ -57,10 +58,11 @@ const Home = () => {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Registration failed');
-      // Optionally auto-login after register
-      setUser(data.user);
-      localStorage.setItem('sessionUser', JSON.stringify(data.user));
-      setActivePage('home');
+  // Optionally auto-login after register
+  setUser(data.user);
+  localStorage.setItem('user', JSON.stringify(data.user));
+  localStorage.setItem('access_token', data.access_token);
+  setActivePage('home');
     } catch (err) {
       alert(err.message);
     }
@@ -112,8 +114,8 @@ const Home = () => {
           <p>Your platform for community feedback and management.</p>
           {user && (
             <>
-              <ComplaintForm userId={user.id} onSubmitted={() => setRefreshComplaints(prev => !prev)} />
-              <UserComplaintsTable userId={user.id} refreshKey={refreshComplaints} />
+              <ComplaintForm userId={user.user_id} onSubmitted={() => setRefreshComplaints(prev => !prev)} />
+              <UserComplaintsTable userId={user.user_id} refreshKey={refreshComplaints} />
             </>
           )}
         </section>

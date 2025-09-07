@@ -5,14 +5,9 @@ const AllComplaintsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Helper to get token
+  // Helper to get JWT
   const getToken = () => {
-    const sessionUser = localStorage.getItem('sessionUser');
-    if (sessionUser) {
-      const parsed = JSON.parse(sessionUser);
-      return parsed?.access_token || parsed?.token || parsed?.session?.access_token || '';
-    }
-    return '';
+    return localStorage.getItem('access_token') || '';
   };
 
   const fetchComplaints = () => {
@@ -71,11 +66,11 @@ const AllComplaintsPage = () => {
               <td>{complaint.description || '-'}</td>
               <td>{complaint.postcode || '-'}</td>
               <td>{complaint.urgency != null ? complaint.urgency : '-'}</td>
-              <td>{complaint.cleared === true ? 'Yes' : complaint.cleared === false ? 'No' : '-'}</td>
+              <td>{complaint.is_cleared === true ? 'Yes' : complaint.is_cleared === false ? 'No' : '-'}</td>
               <td>{complaint.created_at ? new Date(complaint.created_at).toLocaleString() : '-'}</td>
               <td>{complaint.user_id || '-'}</td>
               <td>
-                {complaint.cleared ? null : (
+                {complaint.is_cleared ? null : (
                   <button
                     style={{ background: '#2563eb', color: '#fff', border: 'none', borderRadius: '6px', padding: '0.5em 1em', cursor: 'pointer', fontWeight: 600 }}
                     onClick={() => handleClearComplaint(complaint.id)}
