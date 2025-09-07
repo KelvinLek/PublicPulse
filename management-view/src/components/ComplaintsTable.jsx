@@ -7,7 +7,7 @@ const ComplaintsTable = ({ complaints }) => {
 
   return (
     <div id="complaints-table" className="table-container">
-      <h2>Selected Complaints</h2>
+  <h2 className="selected-complaints-heading">Selected Complaints</h2>
       <table>
         <thead>
           <tr>
