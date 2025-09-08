@@ -12,8 +12,8 @@ const ComplaintsTable = ({ complaints }) => {
         <thead>
           <tr>
             <th>ID</th>
-            <th>Complaint</th>
-            <th>Location</th>
+            <th>Description</th>
+            <th>Postcode</th>
             <th>Submitted At</th>
           </tr>
         </thead>
@@ -21,9 +21,9 @@ const ComplaintsTable = ({ complaints }) => {
           {complaints.map((complaint) => (
             <tr key={complaint.id}>
               <td>{complaint.id}</td>
-              <td>{complaint.text}</td>
-              <td>{complaint.location}</td>
-              <td>{complaint.submittedAt}</td>
+              <td>{complaint.description}</td>
+              <td>{complaint.postcode}</td>
+              <td>{complaint.created_at}</td>
             </tr>
           ))}
         </tbody>

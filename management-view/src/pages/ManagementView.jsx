@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import MapComponent from '../components/Map';
 import ComplaintsTable from '../components/ComplaintsTable';
@@ -9,48 +9,41 @@ const ManagementView = ({ onLogout }) => {
   const [selectedComplaints, setSelectedComplaints] = useState([]);
   const [activeTab, setActiveTab] = useState('map');
 
-  // Mock data for clusters - replace this with data from your backend
-  const clusters = [
-    {
-      id: 1,
-      lat: 1.3521,
-      lng: 103.8198,
-      radius: 500,
-      urgency: 80,
-      description: 'Cluster near City Center: Multiple urgent complaints about broken streetlights and potholes.',
-      complaints: [
-        { id: 101, text: 'Broken streetlight', location: 'Street A', submittedAt: '2024-01-15' },
-        { id: 102, text: 'Pothole', location: 'Street B', submittedAt: '2024-01-14' },
-      ],
-    },
-    {
-      id: 2,
-      lat: 1.36,
-      lng: 103.83,
-      radius: 300,
-      urgency: 45,
-      description: 'Cluster near Park Connector: Moderate urgency due to overflowing dustbin.',
-      complaints: [
-        { id: 201, text: 'Overflowing dustbin', location: 'Park Connector', submittedAt: '2024-01-16' },
-      ],
-    },
-     {
-      id: 3,
-      lat: 1.34,
-      lng: 103.80,
-      radius: 400,
-      urgency: 25,
-      description: 'Cluster near Playground: Low urgency, faded paint and minor scuff marks reported.',
-      complaints: [
-        { id: 301, text: 'Faded paint on bench', location: 'Playground', submittedAt: '2024-01-12' },
-        { id: 302, text: 'Scuff marks on wall', location: 'Void Deck', submittedAt: '2024-01-11' },
-      ],
-    },
-  ];
 
-  const handleClusterClick = (complaints) => {
-    setSelectedComplaints(complaints);
-    // Use a short timeout to ensure the table is rendered before scrolling
+  // Fetch clusters from backend
+  const [clusters, setClusters] = useState([]);
+  useEffect(() => {
+    async function fetchClusters() {
+      try {
+  const res = await fetch('http://localhost:3001/api/clusters');
+        const data = await res.json();
+        setClusters(data.clusters || []);
+      } catch (e) {
+        console.error('Failed to fetch clusters:', e);
+        setClusters([]);
+      }
+    }
+    fetchClusters();
+  }, []);
+
+
+  // Fetch complaint details by ID from backend
+  const handleClusterClick = async (complaints) => {
+    if (!complaints || complaints.length === 0) return setSelectedComplaints([]);
+    try {
+      // complaints is array of {id}
+      const ids = complaints.map(c => c.id);
+      const res = await fetch('http://localhost:3001/api/complaints/batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids }),
+      });
+      const data = await res.json();
+      setSelectedComplaints(data.complaints || []);
+    } catch (e) {
+      console.error('Failed to fetch complaints:', e);
+      setSelectedComplaints([]);
+    }
     setTimeout(() => {
       document.getElementById('complaints-table')?.scrollIntoView({ behavior: 'smooth' });
     }, 100);
@@ -60,9 +53,17 @@ const ManagementView = ({ onLogout }) => {
   // Use isLoaded to prevent duplicate script loads
   const { isLoaded, loadError } = useJsApiLoader({ googleMapsApiKey: apiKey });
 
+  // Enhanced logout: clear local/session storage
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
+    if (onLogout) onLogout();
+    window.location.reload();
+  };
+
   return (
     <div>
-      <Navbar onLogout={onLogout} onTabChange={setActiveTab} activeTab={activeTab} />
+      <Navbar onLogout={handleLogout} onTabChange={setActiveTab} activeTab={activeTab} />
       {activeTab === 'map' && (
         <>
           <div className="map-container">

@@ -71,8 +71,12 @@ const Home = () => {
   // Handle logout
   const handleLogout = () => {
     setUser(null);
-    localStorage.removeItem('sessionUser');
+    localStorage.removeItem('user');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     setActivePage('home');
+    window.location.reload();
   };
 
   // Navbar buttons
@@ -80,7 +84,7 @@ const Home = () => {
     { label: 'Home', page: 'home', show: true },
     // Only show Management button for management users
     { label: 'Management', page: 'management', show: isManagement },
-    { label: 'About', page: 'about', show: true },
+    // About button removed
     { label: 'Login', page: 'login', show: !user },
     { label: 'Register', page: 'register', show: !user },
     { label: 'Logout', page: 'logout', show: !!user },

@@ -26,11 +26,7 @@ const Navbar = ({ onLogout, onTabChange, activeTab }) => {
               }}
             >All Complaints</a>
           </li>
-          {onLogout && (
-            <li>
-              <a href="#logout" onClick={e => { e.preventDefault(); onLogout(); }}>Logout</a>
-            </li>
-          )}
+          {/* Logout button removed for manager view */}
         </ul>
       </div>
     </nav>

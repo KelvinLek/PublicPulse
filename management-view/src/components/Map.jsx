@@ -1,6 +1,8 @@
 // src/components/Map.jsx
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { GoogleMap, Circle } from '@react-google-maps/api';
+import { geocodePostcode } from '../utils/geocodePostcode';
 
 const containerStyle = {
   width: '100%',
@@ -12,17 +14,32 @@ const center = {
   lng: 103.8198
 };
 
+
 const MapComponent = ({ clusters, onClusterClick }) => {
   const [hoveredCluster, setHoveredCluster] = useState(null);
-  // For testing: show cluster descriptions in console
-  React.useEffect(() => {
-    if (clusters && clusters.length > 0) {
-      clusters.forEach((cluster, idx) => {
-        console.log(`Test Cluster ${idx + 1}: Description =`, cluster.description || 'No description');
-      });
+  const [geoClusters, setGeoClusters] = useState([]);
+  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+
+  useEffect(() => {
+    async function fetchGeocodes() {
+      if (!clusters || clusters.length === 0) return setGeoClusters([]);
+      const results = await Promise.all(clusters.map(async (cluster) => {
+        if (cluster.postcode) {
+          try {
+            const { lat, lng } = await geocodePostcode(cluster.postcode, apiKey);
+            return { ...cluster, lat, lng };
+          } catch (e) {
+            console.error('Geocode error:', e);
+            return { ...cluster, lat: center.lat, lng: center.lng };
+          }
+        }
+        return cluster;
+      }));
+      setGeoClusters(results);
     }
-  }, [clusters]);
-  // apiKey is now handled by parent
+    fetchGeocodes();
+  }, [clusters, apiKey]);
+
   const getCircleOptions = (urgency) => {
     const color = urgency > 70 ? 'red' : (urgency > 40 ? 'orange' : 'yellow');
     return {
@@ -43,8 +60,8 @@ const MapComponent = ({ clusters, onClusterClick }) => {
           center={center}
           zoom={12}
         >
-          {clusters.map((cluster) => (
-            <React.Fragment key={cluster.id}>
+          {geoClusters.map((cluster) => (
+            <React.Fragment key={cluster.cluster_id || cluster.id}>
               <Circle
                 center={{ lat: cluster.lat, lng: cluster.lng }}
                 radius={cluster.radius}
@@ -53,7 +70,7 @@ const MapComponent = ({ clusters, onClusterClick }) => {
                 onMouseOver={() => setHoveredCluster(cluster)}
                 onMouseOut={() => setHoveredCluster(null)}
               />
-              {hoveredCluster && hoveredCluster.id === cluster.id && (
+              {hoveredCluster && (hoveredCluster.cluster_id || hoveredCluster.id) === (cluster.cluster_id || cluster.id) && (
                 <div
                   style={{
                     position: 'absolute',
